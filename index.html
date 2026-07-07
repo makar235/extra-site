@@ -3,17 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ExtraVPN — Свободный интернет без границ</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <title>Твой пропуск в открытый интернет</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700;900&display=swap" rel="stylesheet">
     <style>
-        /* Базовые настройки и переменные */
         :root {
-            --bg-color: #0f172a;
-            --text-color: #f8fafc;
-            --primary-color: #3b82f6;
-            --primary-hover: #2563eb;
-            --card-bg: #1e293b;
-            --accent-gradient: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            --bg-color: #050505;
+            --text-color: #f3f4f6;
+            --accent-1: #4f46e5;
+            --accent-2: #06b6d4;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --card-border: rgba(255, 255, 255, 0.08);
         }
 
         * {
@@ -26,51 +25,74 @@
             font-family: 'Inter', sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
-            line-height: 1.6;
             overflow-x: hidden;
+            line-height: 1.6;
         }
 
-        /* Анимации */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        /* Анимированный фон (световые пятна) */
+        .ambient-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            overflow: hidden;
+            background: #050505;
         }
 
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7); }
-            70% { box-shadow: 0 0 0 20px rgba(59, 130, 246, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.5;
+            animation: float 20s infinite alternate ease-in-out;
+        }
+
+        .orb-1 {
+            width: 400px;
+            height: 400px;
+            background: var(--accent-1);
+            top: -100px;
+            left: -100px;
+        }
+
+        .orb-2 {
+            width: 500px;
+            height: 500px;
+            background: var(--accent-2);
+            bottom: -150px;
+            right: -100px;
+            animation-delay: -5s;
+        }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(100px, 50px) scale(1.2); }
+            100% { transform: translate(-50px, 100px) scale(0.9); }
         }
 
         /* Навигация */
         header {
-            padding: 20px 50px;
+            padding: 24px 50px;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: rgba(15, 23, 42, 0.9);
-            backdrop-filter: blur(10px);
+            justify-content: center;
             position: fixed;
             width: 100%;
             top: 0;
             z-index: 100;
+            background: linear-gradient(to bottom, rgba(5,5,5,0.9), transparent);
         }
 
         .logo {
-            font-size: 24px;
-            font-weight: 800;
-            background: var(--accent-gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            font-size: 20px;
+            font-weight: 900;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.5);
         }
 
-        /* Главный экран (Hero) */
+        /* Главный экран */
         .hero {
             min-height: 100vh;
             display: flex;
@@ -78,180 +100,296 @@
             justify-content: center;
             align-items: center;
             text-align: center;
-            padding: 100px 20px 20px;
-            background: radial-gradient(circle at 50% 50%, rgba(59, 130, 246, 0.1) 0%, transparent 50%);
+            padding: 0 20px;
+            position: relative;
+        }
+
+        .badge {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--card-border);
+            padding: 8px 16px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-bottom: 24px;
+            color: #a5b4fc;
+            backdrop-filter: blur(10px);
+            opacity: 0;
+            animation: fadeUp 1s forwards 0.2s;
         }
 
         .hero h1 {
-            font-size: 3rem;
-            margin-bottom: 20px;
-            animation: fadeInUp 0.8s ease-out forwards;
+            font-size: 4rem;
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 24px;
+            max-width: 800px;
+            background: linear-gradient(135deg, #fff 0%, #9ca3af 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            opacity: 0;
+            animation: fadeUp 1s forwards 0.4s;
         }
 
         .hero p {
-            font-size: 1.25rem;
-            color: #cbd5e1;
-            max-width: 600px;
+            font-size: 1.2rem;
+            color: #9ca3af;
+            max-width: 500px;
             margin-bottom: 40px;
+            font-weight: 300;
             opacity: 0;
-            animation: fadeInUp 0.8s ease-out 0.2s forwards;
+            animation: fadeUp 1s forwards 0.6s;
         }
 
-        /* Кнопка */
         .cta-btn {
+            position: relative;
             display: inline-flex;
             align-items: center;
-            justify-content: center;
-            padding: 18px 40px;
-            font-size: 1.2rem;
-            font-weight: 600;
+            padding: 18px 45px;
+            font-size: 1.1rem;
+            font-weight: 700;
             color: #fff;
             text-decoration: none;
-            background: var(--accent-gradient);
+            background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
             border-radius: 50px;
-            transition: transform 0.3s ease;
-            animation: fadeInUp 0.8s ease-out 0.4s forwards, pulse 2s infinite;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(79, 70, 229, 0.3);
             opacity: 0;
+            animation: fadeUp 1s forwards 0.8s;
+        }
+
+        .cta-btn::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: rgba(255,255,255,0.2);
+            transform: rotate(45deg) translateY(-100%);
+            transition: transform 0.6s ease;
+        }
+
+        .cta-btn:hover::after {
+            transform: rotate(45deg) translateY(100%);
         }
 
         .cta-btn:hover {
-            transform: scale(1.05);
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(6, 182, 212, 0.4);
         }
 
-        /* Блок преимуществ */
+        /* Индикатор скролла */
+        .scroll-indicator {
+            position: absolute;
+            bottom: 40px;
+            opacity: 0;
+            animation: fadeUp 1s forwards 1.2s, bounce 2s infinite 2s;
+            color: rgba(255,255,255,0.3);
+        }
+
+        .scroll-indicator svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        /* Секция особенностей (Glassmorphism) */
         .features {
-            padding: 80px 20px;
+            padding: 100px 20px;
             max-width: 1200px;
             margin: 0 auto;
+            position: relative;
+            z-index: 10;
         }
 
-        .features-title {
+        .features-header {
             text-align: center;
+            margin-bottom: 80px;
+        }
+
+        .features-header h2 {
             font-size: 2.5rem;
-            margin-bottom: 60px;
+            font-weight: 700;
         }
 
         .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 30px;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
         }
 
         .card {
-            background-color: var(--card-bg);
+            background: var(--card-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--card-border);
             padding: 40px 30px;
-            border-radius: 20px;
-            text-align: center;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 24px;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 50% 0%, rgba(79, 70, 229, 0.15), transparent 70%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
         }
 
         .card:hover {
             transform: translateY(-10px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
-            border-color: rgba(59, 130, 246, 0.3);
+            border-color: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.4);
         }
 
-        .card-icon {
-            font-size: 3rem;
-            margin-bottom: 20px;
+        .card:hover::before {
+            opacity: 1;
+        }
+
+        .icon-wrapper {
+            width: 60px;
+            height: 60px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 24px;
+            border: 1px solid var(--card-border);
         }
 
         .card h3 {
-            font-size: 1.5rem;
-            margin-bottom: 15px;
+            font-size: 1.4rem;
+            margin-bottom: 12px;
+            font-weight: 700;
         }
 
         .card p {
-            color: #94a3b8;
-            font-size: 1rem;
+            color: #9ca3af;
+            font-size: 0.95rem;
+            line-height: 1.7;
         }
 
-        /* Подвал */
         footer {
             text-align: center;
-            padding: 40px 20px;
-            background-color: #0b1120;
-            color: #64748b;
+            padding: 40px;
+            color: rgba(255,255,255,0.2);
+            font-size: 0.9rem;
+            border-top: 1px solid var(--card-border);
+            margin-top: 50px;
         }
 
-        /* Адаптивность для мобильных устройств */
+        /* Анимации */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-15px); }
+            60% { transform: translateY(-7px); }
+        }
+
         @media (max-width: 768px) {
-            header {
-                padding: 15px 20px;
-                justify-content: center;
-            }
-            .hero h1 {
-                font-size: 2.2rem;
-            }
-            .hero p {
-                font-size: 1.1rem;
-            }
+            .hero h1 { font-size: 2.8rem; }
+            .hero p { font-size: 1.1rem; }
+            .orb-1 { width: 300px; height: 300px; }
+            .orb-2 { width: 300px; height: 300px; }
         }
     </style>
 </head>
 <body>
 
+    <!-- Размытый анимированный фон -->
+    <div class="ambient-bg">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+    </div>
+
+    <!-- Минималистичная шапка -->
     <header>
-        <div class="logo">ExtraVPN</div>
+        <div class="logo">EXTRA</div>
     </header>
 
+    <!-- Главный экран -->
     <section class="hero">
-        <h1>Свободный интернет<br>без границ и блокировок</h1>
-        <p>Получи доступ к любым сайтам, стримингам и соцсетям в один клик. Надежный сервис прямо в твоем Telegram.</p>
+        <div class="badge">✨ Работает незаметно и быстро</div>
+        <h1>Твой пропуск<br>в открытый мир</h1>
+        <p>Никаких сложных настроек. Запускай бота, забирай ключ и возвращай себе доступ к привычным сервисам в один клик.</p>
         
         <a href="https://t.me/extravpnrobot?start=PXQUH80Q6" class="cta-btn" target="_blank">
-            🚀 Подключить в Telegram
+            Открыть в Telegram
         </a>
+
+        <!-- Иконка прокрутки -->
+        <div class="scroll-indicator">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+            </svg>
+        </div>
     </section>
 
+    <!-- Интересные карточки с преимуществами -->
     <section class="features">
-        <h2 class="features-title">Почему выбирают нас?</h2>
+        <div class="features-header">
+            <h2>Новый уровень комфорта</h2>
+        </div>
         <div class="grid">
-            <div class="card">
-                <div class="card-icon">💰</div>
-                <h3>Выгодная цена</h3>
-                <p>Премиум-качество по цене чашки кофе. Забудь о дорогих подписках, плати только за реальную выгоду.</p>
+            <div class="card reveal">
+                <div class="icon-wrapper">🎭</div>
+                <h3>Цифровая тень</h3>
+                <p>Твой трафик выглядит как обычный интернет-серфинг. Провайдеры видят лишь шум, а ты наслаждаешься приватностью.</p>
             </div>
-            <div class="card">
-                <div class="card-icon">⚡</div>
-                <h3>Высокая скорость</h3>
-                <p>Наши серверы обеспечивают стабильное соединение. Смотри видео в 4K и играй без пинга и буферизации.</p>
+            <div class="card reveal">
+                <div class="icon-wrapper">🚀</div>
+                <h3>Стриминг без границ</h3>
+                <p>Умные маршруты позволяют смотреть видео в 4K, слушать музыку и играть с минимальным пингом. Забудь про буферизацию.</p>
             </div>
-            <div class="card">
-                <div class="card-icon">📱</div>
-                <h3>До 5 устройств</h3>
-                <p>Одна подписка для всей семьи. Используй VPN на смартфоне, планшете, компьютере и телевизоре одновременно.</p>
+            <div class="card reveal">
+                <div class="icon-wrapper">🔄</div>
+                <h3>Экосистема устройств</h3>
+                <p>Телефон, планшет, ноутбук и даже телевизор. Достаточно одной подписки, чтобы покрыть все твои девайсы.</p>
             </div>
-            <div class="card">
-                <div class="card-icon">🛡️</div>
-                <h3>Полная анонимность</h3>
-                <p>Мы не ведем логи активности. Твой трафик надежно зашифрован, а личные данные находятся в безопасности.</p>
+            <div class="card reveal">
+                <div class="icon-wrapper">☕</div>
+                <h3>Умная экономия</h3>
+                <p>Премиальное качество соединения по цене, которая не бьет по карману. Плати за реальные технологии, а не за маркетинг.</p>
             </div>
         </div>
     </section>
 
     <footer>
-        <p>© 2026 ExtraVPN. Все права защищены.</p>
+        <p>© 2026 Extra. Доступ к свободному интернету.</p>
     </footer>
 
+    <!-- Скрипт для красивого появления карточек при скролле -->
     <script>
         document.addEventListener("DOMContentLoaded", () => {
-            const cards = document.querySelectorAll('.card');
+            const cards = document.querySelectorAll('.reveal');
             
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
                         entry.target.style.opacity = 1;
                         entry.target.style.transform = 'translateY(0)';
+                        observer.unobserve(entry.target);
                     }
                 });
             }, { threshold: 0.1 });
 
             cards.forEach((card, index) => {
                 card.style.opacity = 0;
-                card.style.transform = 'translateY(50px)';
-                card.style.transition = `all 0.6s ease-out ${index * 0.15}s`;
+                card.style.transform = 'translateY(40px)';
+                card.style.transition = `all 0.6s cubic-bezier(0.4, 0, 0.2, 1) ${index * 0.1}s`;
                 observer.observe(card);
             });
         });
